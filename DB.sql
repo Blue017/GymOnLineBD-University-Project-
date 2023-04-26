@@ -116,23 +116,56 @@ CREATE TABLE Trainer_Membership_Association (
   FOREIGN KEY (Id_Trainer) REFERENCES Trainer(Id_Trainer)
 );
 
-INSERT INTO Login (Id_Customer, Id_Admin)
-VALUES (101, 1), (102, 2), (103, 3), (104, 4), (105, 5);
+INSERT INTO Department (Department)
+VALUES ('Gimnasio');
 
-INSERT INTO Admin (Id_Admin, First_Name, Last_Name, Email, Password, Phone, Start_Date, Permissions, Id_Department)
-VALUES (1, 'Michell', 'Smith', 'smith1@email.com', '33331', '5555556', '2022-02-14', 'Tables, Control to a user, edit tables, upload data', 21),
-       (2, 'Caroline', 'Johnson', 'johnson@email.com', '44441', '5555557', '2022-03-15', 'tables', 22),
-       (3, 'Frank', 'Walker', 'frank2@email.com', '55551', '5555558', '2022-04-16', 'tables', 23),
-       (4, 'Emile', 'Shapman', 'emile3@email.com', '66661', '5555559', '2022-05-17', 'tables', 22),
-       (5, 'Caroline', 'Reaper', 'caroline4@email.com', '77771', '5555550', '2022-06-18', 'tables', 21);
+INSERT INTO Admin (First_Name, Last_Name, Email, Password, Phone, Start_Date, Permissions, Id_Department)
+VALUES ('Juan', 'Pérez', 'juanperez@gmail.com', 'password123', '123456789', '2022-01-01', 'Admin', 1);
 
-INSERT INTO Department (Id_Department, Department)
-VALUES (21, 'Logic'), (22, 'Data'), (23, 'Support');
+INSERT INTO Articles (Product_Name, Price, Description, Quantity)
+VALUES ('Pesa de 2kg', 20.99, 'Pesa de 2kg para entrenamiento', 10);
 
-INSERT INTO Customer (Id_Customer, First_Name, Last_Name, Email, Password, Phone)
-VALUES (101, 'Sheldon', 'Cooper', 'sheldon1@email.com', '88882', '5555557'),
-       (102, 'Rose', 'Baker', 'rose2@email.com', '88883', '5555558'),
-       (103, 'David', 'Bennet', 'david3@email.com', '88884', '5555559'),
-       (104, 'Sylvanas', 'Windrunner', 'sylvie@email.com', '88885', '5555550'),
-       (105, 'Cairne', 'Bloodhoof', 'carine4@email.com', '88886', '5555516');
+INSERT INTO Customer (First_Name, Last_Name, Email, Password, Phone)
+VALUES ('Ana', 'González', 'anagonzalez@gmail.com', 'password123', '987654321');
 
+INSERT INTO Membership (Type, Price, Description, Duration)
+VALUES ('Membresía básica', 50.99, 'Acceso al gimnasio y a los entrenadores por un mes', 30);
+
+INSERT INTO Purchase (Date, Payment_Method, Total_Price)
+VALUES ('2022-02-01', 'Tarjeta de crédito', 70.98);
+
+INSERT INTO Routines (Id_Routines, Description, Id_Membership)
+VALUES (1, 'Rutina de fuerza para principiantes', 1);
+
+INSERT INTO Customer_Membership (Id_Customer, Id_Membership)
+VALUES (1, 1);
+
+-- Agregar una compra
+INSERT INTO Purchase (Date, Payment_Method, Total_Price) VALUES ('2022-04-26', 'Tarjeta de crédito', 100.00);
+
+-- Agregar un cliente
+INSERT INTO Customer (First_Name, Last_Name, Email, Password, Phone) VALUES ('Juan', 'Pérez', 'juan.perez@example.com', 'password', '555-1234');
+
+-- Agregar una membresía
+INSERT INTO Membership (Type, Price, Description, Duration) VALUES ('Básico', 50.00, 'Membresía básica de 1 mes', 30);
+
+-- Asociar un cliente con una membresía
+INSERT INTO Customer_Membership (Id_Customer, Id_Membership) VALUES (1, 1);
+
+-- Asociar una rutina con una membresía
+INSERT INTO Routines (Id_Routines, Description, Id_Membership) VALUES (1, 'Rutina de cardio', 1);
+
+-- Asociar una compra con un cliente
+INSERT INTO Customer_Purchase (Id_Customer, Id_Purchase) VALUES (1, 1);
+
+-- Asociar una compra con un producto
+INSERT INTO Purchase_Articles (Id_Purchase_Articles, Quantity, Id_Article, Id_Purchase) VALUES (1, 1, 1, 1);
+
+SELECT Routines.Id_Routines, Routines.Description, COUNT(*) as Purchase_Count
+FROM Purchase
+INNER JOIN Customer_Purchase ON Purchase.Id_Purchase = Customer_Purchase.Id_Purchase
+INNER JOIN Customer_Membership ON Customer_Purchase.Id_Customer = Customer_Membership.Id_Customer
+INNER JOIN Routines ON Customer_Membership.Id_Membership = Routines.Id_Membership
+GROUP BY Routines.Id_Routines
+ORDER BY Purchase_Count DESC
+LIMIT 1;
